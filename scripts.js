@@ -1,130 +1,115 @@
 //global variable
-let humanScore = 0;
+let playerScore = 0;
 let computerScore = 0;
 
-function getComputerChoice() {
+function getComputerSelection() {
     
-    let randomNum = Math.floor(Math.random() * 10);
-    
-    let computerChoice;
+    let randomNum = Math.floor(Math.random()*3);
 
-    if (randomNum <3)
-        computerChoice = "rock";
-
-    else if (randomNum < 6)
-        computerChoice = "paper";
-
-    else
-        computerChoice = "scissors";
-
-    return computerChoice;
+    switch(randomNum) {
+        case 0: return "rock";
+        break;
+        case 1: return "paper";
+        break;
+        case 2: return "scissors";
+        break;
+        default: return console.log("error(1)");
+    }
 }
 
-function getHumanChoice() {
-    let humanChoice = prompt("Enter your choice (rock, paper, scissors): ");
+function fetchResult(playerChoice, computerChoice) {
 
-    return humanChoice;
+    if(playerChoice == computerChoice) return "tie";
+
+    else if ((playerChoice == "rock" && computerChoice == "scissors") || 
+    (playerChoice == "paper" && computerChoice == "rock") ||
+    (playerChoice == "scissors" && computerChoice == "paper")) return "win";
+
+    else return "lose";
 }
 
-function playRound(humanChoice, computerChoice) {
+function updateScore(result) {
+    if(result == "win") {
+        playerScore++;
+        let player = document.querySelector("#player");
+        player.textContent = "Player: "+ playerScore;
+    }
+    if(result == "lose") {
+        //debugger
+        console.log(computerScore);
+        computerScore++;
+        let computer = document.querySelector("#computer");
+        computer.textContent = "Computer: " + computerScore;
+    }
+
+}
+//Need this function to capitalize first letter of a string 
+function capitalize(string) {
+    return string.charAt(0).toUpperCase() + string.slice(1);
+}
+
+function updateMessage(result, playerChoice, computerChoice) {
+
+    let message = document.querySelector("#message");
+    switch(result) {
+        case "win":
+            message.textContent = "Computer chose " + computerChoice + ". You win! " + capitalize(playerChoice) + " beats " + computerChoice + ".";
+        break;
+        case "lose": 
+            message.textContent = "Computer chose " + computerChoice +". You lose! " + capitalize(playerChoice) + " loses to " + computerChoice + ".";
+        break;
+        case "tie":
+            message.textContent = "Computer chose " + computerChoice + ". It is a tie!"
+        break;
+        default: console.log("error(2)");
+    }
+
+}
+
+function resetGame() {
+    playerScore = 0;
+    computerScore = 0;
+
+    let message = document.querySelector("#message");
+    message.textContent = "Can you beat the computer?"
+
+    let player = document.querySelector("#player");
+    player.textContent = "Player: 0"
+
+    let computer = document.querySelector("#computer");
+    computer.textContent = "Computer: 0";
+
+}
+
+function playRound(playerSelection) {
    
-    console.log("Computer chose: " + computerChoice);
+    let computerSelection = getComputerSelection();
+    let result = fetchResult(playerSelection, computerSelection);
+    updateMessage(result, playerSelection, computerSelection);
+    updateScore(result);
 
-    //formatting humanChoice to compare effectively
-    humanChoice = (humanChoice.toLowerCase()).trim();
-
-    console.log("You chose: " + humanChoice);
-    
-    
-    switch(humanChoice) {
-
-        case "rock":
-
-            if(computerChoice == "paper") {
-                console.log("You lose! Paper beats Rock.");
-                computerScore++;
-            }
-
-            else if(computerChoice == "rock")
-              console.log("It is a tie.");
-            
-            else {
-                console.log("You win! Rock beats Scissors.");
-                humanScore++;
-            }
-
-        break;
-
-        case "paper":
-
-            if(computerChoice == "scissors") {
-                console.log("You lose! Scissor beats Paper.");
-                computerScore++;
-            }
-
-            else if(computerChoice == "paper") 
-              console.log("It is a tie.");
-
-            else {
-                console.log("You win! Paper beats Rock.");
-                humanScore++;
-            }
-
-        break;
-
-        case "scissors":
-
-            if(computerChoice == "rock") {
-                console.log("You lose! Rock beats Scissors.");
-                computerScore++;
-            }
-
-            else if(computerChoice == "scissors")
-              console.log("It is a tie.");
-
-            else {
-                console.log("You win! Scissors beats Paper.");
-                humanScore++;
-            }
-
-        break;
-
-                
-        default:
-            console.log("Please check the spelling and try again.")
-
-    }
-
+    if(playerScore == 5 || computerScore == 5)
+        displayFinalScore();
 }
 
-function playGame(rounds) {
 
-    while(rounds > 0){
-        const humanSelection = getHumanChoice();
-        const computerSelection = getComputerChoice();
+function displayFinalScore() {
+    if(playerScore > computerScore)
+        alert("You Win!");
+    else 
+        alert("You Lose!");
 
-        playRound(humanSelection, computerSelection);
-
-        rounds--;
-
-    }
-
+    resetGame();
 }
 
-function displayScores() {
-    console.log("Human:" + humanScore + "\tComputer:" + computerScore);
-    if(humanScore > computerScore)
-        console.log("You Win!");
-    else if (humanScore < computerScore)
-        console.log("You Lose!");
-    else
-        console.log("It is a tie.");
-}
+// Adding event listeners on buttons to call playRound() on click
+const buttonsList = document.querySelectorAll("button");
 
-let playRounds = prompt("How many rounds do you want to play?");
-
-playGame(playRounds);
-
-displayScores();
+// this.id returns the id of the button that was clicked 
+buttonsList.forEach(button => {
+    button.addEventListener("click", function (){
+        playRound(this.id); 
+    });
+});
 
 
