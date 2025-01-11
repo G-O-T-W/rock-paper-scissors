@@ -1,6 +1,31 @@
 let humanScore = 0, computerScore = 0;
 let round = 0;
 
+function updateScoreboard() {
+    if (!(humanScore > 5 || computerScore > 5)) {
+        const score = document.querySelector("div.score");
+        score.textContent = `Human: ${humanScore} \t|\t Computer: ${computerScore}`;
+    }  
+}
+
+function checkWinner() {
+    const winner = document.querySelector("div.winner");
+    if (humanScore == 5) {
+        winner.textContent = "Human Won!";
+        setTimeout(function() {
+            alert("You won! AI who?? More like AI'nt nothing :D");
+        }, 0);
+        
+    }
+
+    if (computerScore == 5) {
+        winner.textContent = "Computer Won!";
+        setTimeout(function() {
+            alert("You lost! AI takes over the world. ;(");
+        }, 0);
+    }
+}
+
 function getComputerChoice(){
     // Math.random() * n will give a random number from 0 to (n - 1)
     let rand, computerChoice;
@@ -11,9 +36,7 @@ function getComputerChoice(){
     return computerChoice
 }
 
-function playRound(humanChoice, computerChoice){
-    console.log(humanChoice + " " + computerChoice);
-
+function playRound(humanChoice, computerChoice) {
     console.log(`Round ${++round}`)
     if ( humanChoice == computerChoice ) {
         console.log("It's A Draw!")
@@ -27,37 +50,15 @@ function playRound(humanChoice, computerChoice){
         humanChoice = humanChoice.charAt(0).toUpperCase() + humanChoice.slice(1);
         computerChoice = computerChoice.charAt(0).toUpperCase() + computerChoice.slice(1);
         console.log(`${humanChoice} beats ${computerChoice}. You win!`);
-    }
-    
-    else {
+    } else {
         computerScore++;
         //console code
         humanChoice = humanChoice.charAt(0).toUpperCase() + humanChoice.slice(1);
         computerChoice = computerChoice.charAt(0).toUpperCase() + computerChoice.slice(1);
         console.log(`${computerChoice} beats ${humanChoice}. You lose!`);
     }
-        
-}
-
-function playGame(){
-    console.time("Game Duration")
-    
-    const humanChoice = getHumanChoice()
-    const computerChoice = getComputerChoice()
-    playRound(humanChoice, computerChoice)
-
-    console.timeEnd("Game Duration")
-    scoreboard = `SCOREBOARD
-    Computer: ${computerScore}
-    Human: ${humanScore}
-    `
-    console.log(scoreboard)
-    if (humanScore > computerScore)
-        console.log("Human Won!")
-    else if (humanScore < computerScore)
-        console.log("Computer Won!")
-    else
-        console.log("It's a Draw!")
+    updateScoreboard();
+    checkWinner();      
 }
 
 let humanChoice, computerChoice;
